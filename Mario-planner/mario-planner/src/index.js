@@ -7,16 +7,12 @@ import {createStore, applyMiddleware, compose} from 'redux';
 import RootReducer from './store/reducers/root-reducer';
 import {Provider} from 'react-redux';
 import thunk from 'redux-thunk';//middleware to do async operations 
-import {reduxFirestore, getFirestore} from 'redux-firestore';
-import {getFirebase} from 'react-redux-firebase';
+import {reduxFirestore, getFirestore, createFirestoreInstance} from 'redux-firestore';
+import { ReactReduxFirebaseProvider,getFirebase} from 'react-redux-firebase';
 import fbConfig from './config/fbConfig';
 
 import firebase from 'firebase/app';
 
-const rrfConfig = { 
-  userProfile: 'projects',
-  useFirestoreForProfile: true
-}
 
 const store = createStore(RootReducer,
   compose(
@@ -25,10 +21,26 @@ const store = createStore(RootReducer,
   )
 );
 
+const rrfConfig = {
+  userProfile: 'users',
+}
+const rrfProps = {
+  firebase,
+  config: rrfConfig,
+  dispatch: store.dispatch,
+  createFirestoreInstance,
+
+
+}
+
+
+
 
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+    <ReactReduxFirebaseProvider {...rrfProps}>
+      <App />
+    </ReactReduxFirebaseProvider>
   </Provider>,
   document.getElementById('root')
 );
