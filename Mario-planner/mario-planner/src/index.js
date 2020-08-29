@@ -8,7 +8,7 @@ import RootReducer from './store/reducers/root-reducer';
 import {Provider} from 'react-redux';
 import thunk from 'redux-thunk';//middleware to do async operations 
 import {reduxFirestore, getFirestore, createFirestoreInstance} from 'redux-firestore';
-import { ReactReduxFirebaseProvider,getFirebase} from 'react-redux-firebase';
+import { ReactReduxFirebaseProvider,getFirebase, reactReduxFirebase} from 'react-redux-firebase';
 import fbConfig from './config/fbConfig';
 
 
@@ -18,22 +18,25 @@ import firebase from 'firebase/app';
 const store = createStore(RootReducer,
   compose(
     applyMiddleware(thunk.withExtraArgument({getFirebase, getFirestore})),
-    reduxFirestore(firebase, fbConfig) // redux bindings for firestore
+    reduxFirestore(firebase, fbConfig), // redux bindings for firestore
   )
 );
 
-const rrfConfig = {
+const profileSpecificProps = {
   userProfile: 'users',
+  useFirestoreForProfile: true,
+  // enableRedirectHandling: false,
+  // resetBeforeLogin: false
 }
+
+
 const rrfProps = {
   firebase,
-  config: rrfConfig,
+  config: fbConfig,
+  config: profileSpecificProps,
   dispatch: store.dispatch,
-  createFirestoreInstance,
-
+  createFirestoreInstance
 }
-
-
 
 
 ReactDOM.render(
